@@ -1,6 +1,7 @@
 // Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
 // import "core-js/fn/array.find"
 // ...
+import crypto from 'crypto'
 
 export interface Config {
   appKey: string
@@ -20,4 +21,14 @@ export default class VcloudClient {
       curTime: Math.round(Date.now() / 1000).toString()
     }
   }
+
+  private getCheckSum() {
+    const { appSecret, nonce, curTime } = this.config
+    return crypto
+      .createHash('sha1')
+      .update(appSecret)
+      .update(nonce)
+      .update(curTime)
+  }
+
 }
