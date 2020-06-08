@@ -6,7 +6,7 @@ export interface Config {
   appKey: string
   appSecret: string
   nonce: string
-  curTime: number
+  curTime: string
   trunkSize: number
 }
 
@@ -17,7 +17,7 @@ export default class VcloudClient {
     this.config = {
       ...config,
       nonce: Math.round(Math.random() * Math.pow(10, 16)).toString(),
-      curTime: Math.round(Date.now() / 1000)
+      curTime: Math.round(Date.now() / 1000).toString()
     }
   }
 }
