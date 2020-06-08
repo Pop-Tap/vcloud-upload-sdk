@@ -31,4 +31,12 @@ export default class VcloudClient {
       .update(curTime)
   }
 
+  private buildHeader() {
+    return {
+      AppKey: this.config.appKey,
+      Nonce: this.config.nonce,
+      CurTime: this.config.curTime,
+      CheckSum: this.getCheckSum()
+    }
+  }
 }
