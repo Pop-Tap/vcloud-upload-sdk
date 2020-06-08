@@ -1,7 +1,9 @@
 // Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
 // import "core-js/fn/array.find"
 // ...
-import crypto from 'crypto'
+
+import axios from 'axios'
+import * as crypto from 'crypto'
 
 export interface Config {
   appKey: string
@@ -38,5 +40,19 @@ export default class VcloudClient {
       CurTime: this.config.curTime,
       CheckSum: this.getCheckSum()
     }
+  }
+
+  private async init(filename: string) {
+    return axios.post('http://vcloud.163.com/app/vod/upload/init', {
+      headers: this.buildHeader(),
+      body: {
+        originalFileName: filename
+      }
+    })
+  }
+
+  async upload() {
+    const res = await this.init('abc.txt')
+    console.log(res)
   }
 }

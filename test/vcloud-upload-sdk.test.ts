@@ -9,6 +9,12 @@ describe('Dummy test', () => {
   })
 
   it('DummyClass is instantiable', () => {
-    expect(new VcloudClient()).toBeInstanceOf(VcloudClient)
+    const client = new VcloudClient({
+      appKey: '123',
+      appSecret: '456',
+      trunkSize: 4 * 1024 * 1024
+    })
+    client.upload().then(() => {})
+    expect(client).toBeInstanceOf(VcloudClient)
   })
 })
