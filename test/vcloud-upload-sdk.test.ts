@@ -1,14 +1,14 @@
-import DummyClass from "../src/vcloud-upload-sdk"
+import VcloudClient from '../src/vcloud-upload-sdk'
 
 /**
  * Dummy test
  */
-describe("Dummy test", () => {
-  it("works if true is truthy", () => {
+describe('Dummy test', () => {
+  it('works if true is truthy', () => {
     expect(true).toBeTruthy()
   })
 
-  it("DummyClass is instantiable", () => {
-    expect(new DummyClass()).toBeInstanceOf(DummyClass)
+  it('DummyClass is instantiable', () => {
+    expect(new VcloudClient()).toBeInstanceOf(VcloudClient)
   })
 })
