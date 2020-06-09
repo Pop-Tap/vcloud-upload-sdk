@@ -86,9 +86,12 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  async upload() {
+  async upload(path: string) {
     const initRes = await this.init('abc.mp4')
     const ipRes = await this.getIpAddress(initRes.ret.bucket)
+    if (ipRes.upload.length === 0) {
+      throw new Error('无法找到有效的上传地址')
+    }
     console.log(ipRes)
   }
 }
