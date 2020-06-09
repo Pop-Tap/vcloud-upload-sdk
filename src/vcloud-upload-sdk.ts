@@ -119,6 +119,9 @@ export default class VcloudClient {
     }
     return axios
       .post<UploadChunkResponse>(`${ip}/${config.bucket}/${config.object}`, buffer, {
+        headers: {
+          'x-nos-token': config.token
+        },
         params
       })
       .then(res => res.data)
