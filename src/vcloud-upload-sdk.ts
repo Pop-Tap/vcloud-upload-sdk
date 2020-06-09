@@ -30,6 +30,15 @@ type IpResponse = {
   upload: string[]
 }
 
+type UploadConfig = {
+  token: string
+  bucket: string
+  object: string
+  offset: number
+  complete: boolean
+  context?: string
+}
+
 export default class VcloudClient {
   config: Required<Config>
 
@@ -88,7 +97,9 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  private uploadChunk(ip: string, buffer: Buffer, complete: boolean = false) {}
+  private uploadChunk(ip: string, buffer: Buffer, config: UploadConfig): Promise<void> {
+    return Promise.resolve()
+  }
 
   async upload(path: string) {
     const initRes = await this.init('abc.mp4')
@@ -99,19 +110,39 @@ export default class VcloudClient {
     const ip = ipRes.upload[0]
     return new Promise((resolve, reject) => {
       let lastChunk: Buffer
+      let lastContext: string
+      let offset = 0
+
       fs.createReadStream(path, { highWaterMark: this.config.trunkSize })
         .pipe(
           through2(
             (chunk, enc, cb) => {
               if (lastChunk) {
-                this.uploadChunk(ip, lastChunk)
+                const config: UploadConfig = {
+                  token: initRes.ret.xNosToken,
+                  bucket: initRes.ret.bucket,
+                  object: initRes.ret.object,
+                  offset,
+                  complete: false,
+                  context: lastContext
+                }
+                this.uploadChunk(ip, chunk, config).then(() => {
+                  lastChunk = chunk
+                  offset += this.config.trunkSize
+                  cb(null, chunk)
+                })
               }
-              lastChunk = chunk
-              cb(null, chunk)
             },
             cb => {
-              this.uploadChunk(ip, lastChunk, true)
-              console.log('last call')
+              const config: UploadConfig = {
+                token: initRes.ret.xNosToken,
+                bucket: initRes.ret.bucket,
+                object: initRes.ret.object,
+                offset,
+                complete: true,
+                context: lastContext
+              }
+              this.uploadChunk(ip, lastChunk, config)
               cb()
             }
           )
