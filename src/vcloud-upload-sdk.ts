@@ -39,6 +39,13 @@ type UploadConfig = {
   context?: string
 }
 
+type UploadChunkResponse = {
+  requestId: string
+  offset: number
+  context: string
+  callbackRetMsg: string
+}
+
 export default class VcloudClient {
   config: Required<Config>
 
@@ -97,8 +104,24 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  private uploadChunk(ip: string, buffer: Buffer, config: UploadConfig): Promise<void> {
-    return Promise.resolve()
+  private uploadChunk(
+    ip: string,
+    buffer: Buffer,
+    config: UploadConfig
+  ): Promise<UploadChunkResponse> {
+    const params = {
+      bucket: config.bucket,
+      object: config.object,
+      offset: config.offset,
+      complete: config.complete,
+      version: '1.0',
+      context: config.context
+    }
+    return axios
+      .post<UploadChunkResponse>(`${ip}/${config.bucket}/${config.object}`, buffer, {
+        params
+      })
+      .then(res => res.data)
   }
 
   async upload(path: string) {
@@ -126,9 +149,10 @@ export default class VcloudClient {
                   complete: false,
                   context: lastContext
                 }
-                this.uploadChunk(ip, chunk, config).then(() => {
+                this.uploadChunk(ip, chunk, config).then(response => {
                   lastChunk = chunk
-                  offset += this.config.chunkSize
+                  offset = response.offset
+                  lastContext = response.context
                   cb(null, chunk)
                 })
               }
