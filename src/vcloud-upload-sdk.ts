@@ -88,7 +88,7 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  private uploadChunk(buffer: Buffer, complete: boolean = false) {}
+  private uploadChunk(ip: string, buffer: Buffer, complete: boolean = false) {}
 
   async upload(path: string) {
     const initRes = await this.init('abc.mp4')
@@ -104,13 +104,13 @@ export default class VcloudClient {
           through2(
             (chunk, enc, cb) => {
               if (lastChunk) {
-                this.uploadChunk(lastChunk)
+                this.uploadChunk(ip, lastChunk)
               }
               lastChunk = chunk
               cb(null, chunk)
             },
             cb => {
-              this.uploadChunk(lastChunk, true)
+              this.uploadChunk(ip, lastChunk, true)
               console.log('last call')
               cb()
             }
