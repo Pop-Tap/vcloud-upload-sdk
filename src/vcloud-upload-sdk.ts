@@ -16,6 +16,10 @@ export interface Config {
   chunkSize?: number
 }
 
+export interface UploadResult {
+  url: string
+}
+
 type InitResponse = {
   ret: {
     xNosToken: string
@@ -128,7 +132,7 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  async upload(filePath: string) {
+  async upload(filePath: string): Promise<UploadResult> {
     const initRes = await this.init(path.basename(filePath))
     const ipRes = await this.getIpAddress(initRes.ret.bucket)
     if (ipRes.upload.length === 0) {
@@ -179,7 +183,11 @@ export default class VcloudClient {
           )
         )
         .on('data', function() {})
-        .on('end', function() {})
+        .on('end', function() {
+          resolve({
+            url: `http://${initRes.ret.bucket}.vod.126.net/${initRes.ret.bucket}/${initRes.ret.object}`
+          })
+        })
     })
   }
 }
