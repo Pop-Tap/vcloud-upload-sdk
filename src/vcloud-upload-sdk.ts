@@ -4,6 +4,7 @@
 
 import axios from 'axios'
 import * as crypto from 'crypto'
+import * as fs from 'fs'
 
 export interface Config {
   appKey: string
@@ -86,12 +87,25 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
+  private uploadChunk(buffer: Buffer) {}
+
   async upload(path: string) {
     const initRes = await this.init('abc.mp4')
     const ipRes = await this.getIpAddress(initRes.ret.bucket)
     if (ipRes.upload.length === 0) {
       throw new Error('无法找到有效的上传地址')
     }
-    console.log(ipRes)
+    const ip = ipRes.upload[0]
+    return new Promise((resolve, reject) => {
+      const stream = fs.createReadStream(path, {
+        highWaterMark: this.config.trunkSize
+      })
+      stream.on('data', async function(chunk) {
+        console.log(chunk)
+      })
+      stream.on('end', function() {
+        resolve(true)
+      })
+    })
   }
 }
