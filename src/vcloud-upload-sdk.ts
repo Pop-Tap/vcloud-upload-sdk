@@ -177,17 +177,17 @@ export default class VcloudClient {
                 complete: true,
                 context: lastContext
               }
-              this.uploadChunk(ip, lastChunk, config)
-              cb()
+              this.uploadChunk(ip, lastChunk, config).then(response => {
+                resolve({
+                  url: `http://${initRes.ret.bucket}.vod.126.net/${initRes.ret.bucket}/${initRes.ret.object}`
+                })
+                cb()
+              })
             }
           )
         )
         .on('data', function() {})
-        .on('end', function() {
-          resolve({
-            url: `http://${initRes.ret.bucket}.vod.126.net/${initRes.ret.bucket}/${initRes.ret.object}`
-          })
-        })
+        .on('end', function() {})
     })
   }
 }
