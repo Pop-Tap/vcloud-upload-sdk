@@ -23,6 +23,11 @@ type InitResponse = {
   code: number
 }
 
+type IpResponse = {
+  lbs: string
+  upload: string[]
+}
+
 export default class VcloudClient {
   config: Config
 
@@ -70,8 +75,20 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
+  private getIpAddress(bucket: string): Promise<IpResponse> {
+    return axios
+      .get<IpResponse>('http://wanproxy.127.net/lbs', {
+        params: {
+          version: '1.0',
+          bucketname: bucket
+        }
+      })
+      .then(res => res.data)
+  }
+
   async upload() {
     const initRes = await this.init('abc.mp4')
-    console.log(initRes)
+    const ipRes = await this.getIpAddress(initRes.ret.bucket)
+    console.log(ipRes)
   }
 }
