@@ -27,7 +27,7 @@ export default class VcloudClient {
     }
   }
 
-  private getCheckSum() {
+  private getCheckSum(): string {
     const { appSecret, nonce, curTime } = this.config
     return crypto
       .createHash('sha1')
@@ -37,7 +37,7 @@ export default class VcloudClient {
       .digest('hex')
   }
 
-  private buildHeader() {
+  private buildHeader(): { [key: string]: string } {
     return {
       AppKey: this.config.appKey,
       Nonce: this.config.nonce,
