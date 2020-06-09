@@ -143,7 +143,10 @@ export default class VcloudClient {
         .pipe(
           through2(
             (chunk, enc, cb) => {
-              if (lastChunk) {
+              if (!lastChunk) {
+                lastChunk = chunk
+                cb(null, chunk)
+              } else {
                 const config: UploadConfig = {
                   token: initRes.ret.xNosToken,
                   bucket: initRes.ret.bucket,
