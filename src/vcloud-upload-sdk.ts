@@ -146,7 +146,7 @@ export default class VcloudClient {
 
       fs.createReadStream(filePath, { highWaterMark: this.config.chunkSize })
         .pipe(
-          through2(
+          through2.obj(
             (chunk, enc, cb) => {
               if (!lastChunk) {
                 lastChunk = chunk
