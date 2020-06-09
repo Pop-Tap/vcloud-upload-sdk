@@ -34,6 +34,7 @@ export default class VcloudClient {
       .update(appSecret)
       .update(nonce)
       .update(curTime)
+      .digest('hex')
   }
 
   private buildHeader() {
