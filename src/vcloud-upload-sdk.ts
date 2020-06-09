@@ -37,7 +37,7 @@ export default class VcloudClient {
       .digest('hex')
   }
 
-  private buildHeader(): { [key: string]: string } {
+  private buildHeaders(): { [key: string]: string } {
     return {
       AppKey: this.config.appKey,
       Nonce: this.config.nonce,
@@ -47,16 +47,19 @@ export default class VcloudClient {
   }
 
   private async init(filename: string) {
-    return axios.post('http://vcloud.163.com/app/vod/upload/init', {
-      headers: this.buildHeader(),
-      body: {
-        originalFileName: filename
+    return axios.post(
+      'http://vcloud.163.com/app/vod/upload/init',
+      {
+        originFileName: filename
+      },
+      {
+        headers: this.buildHeaders()
       }
-    })
+    )
   }
 
   async upload() {
-    const res = await this.init('abc.txt')
+    const res = await this.init('abc.mp4')
     console.log(res)
   }
 }
