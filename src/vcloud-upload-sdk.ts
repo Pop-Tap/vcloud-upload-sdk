@@ -31,7 +31,7 @@ type IpResponse = {
 }
 
 export default class VcloudClient {
-  config: Config
+  config: Required<Config>
 
   constructor(config: Omit<Config, 'nonce' | 'curTime'>) {
     this.config = {
