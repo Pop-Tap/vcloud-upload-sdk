@@ -12,7 +12,7 @@ export interface Config {
   appSecret: string
   nonce: string
   curTime: string
-  trunkSize?: number
+  chunkSize?: number
 }
 
 type InitResponse = {
@@ -45,7 +45,7 @@ export default class VcloudClient {
   constructor(config: Omit<Config, 'nonce' | 'curTime'>) {
     this.config = {
       ...{
-        trunkSize: 4 * 1024 * 1024,
+        chunkSize: 4 * 1024 * 1024,
         nonce: Math.round(Math.random() * Math.pow(10, 16)).toString(),
         curTime: Math.round(Date.now() / 1000).toString()
       },
@@ -113,7 +113,7 @@ export default class VcloudClient {
       let lastContext: string
       let offset = 0
 
-      fs.createReadStream(path, { highWaterMark: this.config.trunkSize })
+      fs.createReadStream(path, { highWaterMark: this.config.chunkSize })
         .pipe(
           through2(
             (chunk, enc, cb) => {
@@ -128,7 +128,7 @@ export default class VcloudClient {
                 }
                 this.uploadChunk(ip, chunk, config).then(() => {
                   lastChunk = chunk
-                  offset += this.config.trunkSize
+                  offset += this.config.chunkSize
                   cb(null, chunk)
                 })
               }
