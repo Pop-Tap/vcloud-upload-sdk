@@ -56,20 +56,22 @@ export default class VcloudClient {
     }
   }
 
-  private async init(filename: string) {
-    return axios.post<InitResponse>(
-      'http://vcloud.163.com/app/vod/upload/init',
-      {
-        originFileName: filename
-      },
-      {
-        headers: this.buildHeaders()
-      }
-    )
+  private async init(filename: string): Promise<InitResponse> {
+    return axios
+      .post<InitResponse>(
+        'http://vcloud.163.com/app/vod/upload/init',
+        {
+          originFileName: filename
+        },
+        {
+          headers: this.buildHeaders()
+        }
+      )
+      .then(res => res.data)
   }
 
   async upload() {
-    const res = await this.init('abc.mp4')
-    console.log(res)
+    const initRes = await this.init('abc.mp4')
+    console.log(initRes)
   }
 }
