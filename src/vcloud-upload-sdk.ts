@@ -13,6 +13,16 @@ export interface Config {
   trunkSize?: number
 }
 
+type InitResponse = {
+  ret: {
+    xNosToken: string
+    bucket: string
+    object: string
+  }
+  requestId: string
+  code: number
+}
+
 export default class VcloudClient {
   config: Config
 
@@ -47,7 +57,7 @@ export default class VcloudClient {
   }
 
   private async init(filename: string) {
-    return axios.post(
+    return axios.post<InitResponse>(
       'http://vcloud.163.com/app/vod/upload/init',
       {
         originFileName: filename
