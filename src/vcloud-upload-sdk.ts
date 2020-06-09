@@ -10,7 +10,7 @@ export interface Config {
   appSecret: string
   nonce: string
   curTime: string
-  trunkSize: number
+  trunkSize?: number
 }
 
 export default class VcloudClient {
@@ -18,9 +18,12 @@ export default class VcloudClient {
 
   constructor(config: Omit<Config, 'nonce' | 'curTime'>) {
     this.config = {
-      ...config,
-      nonce: Math.round(Math.random() * Math.pow(10, 16)).toString(),
-      curTime: Math.round(Date.now() / 1000).toString()
+      ...{
+        trunkSize: 4 * 1024 * 1024,
+        nonce: Math.round(Math.random() * Math.pow(10, 16)).toString(),
+        curTime: Math.round(Date.now() / 1000).toString()
+      },
+      ...config
     }
   }
 
