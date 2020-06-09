@@ -5,6 +5,7 @@
 import axios from 'axios'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
+import * as through2 from 'through2'
 
 export interface Config {
   appKey: string
@@ -87,7 +88,7 @@ export default class VcloudClient {
       .then(res => res.data)
   }
 
-  private uploadChunk(buffer: Buffer) {}
+  private uploadChunk(buffer: Buffer, complete: boolean = false) {}
 
   async upload(path: string) {
     const initRes = await this.init('abc.mp4')
@@ -97,15 +98,26 @@ export default class VcloudClient {
     }
     const ip = ipRes.upload[0]
     return new Promise((resolve, reject) => {
-      const stream = fs.createReadStream(path, {
-        highWaterMark: this.config.trunkSize
-      })
-      stream.on('data', async function(chunk) {
-        console.log(chunk)
-      })
-      stream.on('end', function() {
-        resolve(true)
-      })
+      let lastChunk: Buffer
+      fs.createReadStream(path, { highWaterMark: this.config.trunkSize })
+        .pipe(
+          through2(
+            (chunk, enc, cb) => {
+              if (lastChunk) {
+                this.uploadChunk(lastChunk)
+              }
+              lastChunk = chunk
+              cb(null, chunk)
+            },
+            cb => {
+              this.uploadChunk(lastChunk, true)
+              console.log('last call')
+              cb()
+            }
+          )
+        )
+        .on('data', function() {})
+        .on('end', function() {})
     })
   }
 }
