@@ -155,7 +155,7 @@ export default class VcloudClient {
                   complete: false,
                   context: lastContext
                 }
-                this.uploadChunk(ip, chunk, config).then(response => {
+                this.uploadChunk(ip, lastChunk, config).then(response => {
                   lastChunk = chunk
                   offset = response.offset
                   lastContext = response.context
